@@ -1,7 +1,7 @@
 from src.objs import *
 
 #: Buttons for results
-def resultButton(userLanguage, link, inline=False):
+def resultKeyboard(userLanguage, link, inline=False):
     markup = telebot.types.InlineKeyboardMarkup()
 
     markup.add(telebot.types.InlineKeyboardButton(text=language['joinChannelBtn'][userLanguage], url="https://t.me/h9youtube"), telebot.types.InlineKeyboardButton(text=language['joinDiscussionBtn'][userLanguage], url="https://t.me/h9discussion"))
