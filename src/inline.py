@@ -15,7 +15,7 @@ def inline(inline_query):
             bot.answer_inline_query(inline_query.id, results=[], is_personal=True, switch_pm_text=language['enterLink'][userLanguage], switch_pm_parameter='inlineQuery')
     
     else:
-        url = query.split('?')[0].lower()
+        url = query.split('?')[0]
         url = 'https' + url if not url.startswith('http') else url
         
         #! Check if the URL is already in the database

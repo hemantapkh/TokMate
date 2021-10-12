@@ -17,7 +17,7 @@
     
     "adminId" : null,
 
-    "database": "database.sqlite",
+    "database": "tokmate.sqlite",
 
     "videoDatabase": "videos.sqlite",
 

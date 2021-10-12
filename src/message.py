@@ -13,11 +13,15 @@ def message(message):
     if floodControl(message, userLanguage):
         #! Start message handler
         if message.text == '/start':
-            bot.send_message(message.chat.id, language['greet'][userLanguage], reply_markup=startKeyboard(userLanguage))
+            bot.send_message(message.chat.id, language['greet'][userLanguage].format(message.from_user.first_name), reply_markup=startKeyboard(userLanguage))
+
+        #! Inline query start handler
+        elif message.text == '/start inlineQuery':
+            bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAANEYWV8vnrx1aDQVFFjqajvaCqpwc4AAksNAAIUOzlLPz1-YEAZN1QhBA')
 
         #! Link message handler
         else:
-            url = message.text.split('?')[0].lower()
+            url = message.text.split('?')[0]
             url = 'https' + url if not url.startswith('http') else url
             
             #! Check if the URL is already in the database
