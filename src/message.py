@@ -48,7 +48,15 @@ def message(message):
             #! If video download is successful
             if videoId:
                 bot.send_chat_action(message.chat.id, 'upload_video')
-                sent = bot.send_video(message.chat.id, videoId if setRcVideoId else videoId['videoId'], reply_markup=resultKeyboard(userLanguage, url))
+
+                if setRcVideoId:
+                    sent = bot.send_video(message.chat.id, videoId, reply_markup=resultKeyboard(userLanguage, url))
+                    dbSql.increaseCounter('messageRequest')
+                
+                else:
+                    sent = bot.send_video(message.chat.id, videoId['videoId'], reply_markup=resultKeyboard(userLanguage, url))
+                    dbSql.increaseCounter('messageRequestCached')
+
                 bot.delete_message(message.chat.id, message.id)
 
                 if setRcVideoId:

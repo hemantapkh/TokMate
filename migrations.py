@@ -63,4 +63,16 @@ if input1 == 'y':
          
     print('[+] Table flood created successfully.')
 
+    conn.execute('''CREATE TABLE stats
+        (messageRequest INT DEFAULT 0,
+        messageRequestCached INT DEFAULT 0,
+        inlineRequest  INT DEFAULT 0,
+        inlineRequestCached  INT DEFAULT 0
+        );''')
+
+    conn.execute('INSERT INTO stats VALUES(0,0,0,0)')
+    conn.commit()
+
+    print('[+] Table Stats created successfully.')
+
     conn.close()

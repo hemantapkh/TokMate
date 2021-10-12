@@ -124,6 +124,14 @@ class dbQuery():
 
         return video
 
+    #: Increase stats count
+    def increaseCounter(self, type):
+        con = sqlite3.connect(self.db)
+        cur = con.cursor()
+
+        cur.execute(f'UPDATE stats SET {type}={type}+1')
+        con.commit()
+
 #: Return query as dictionary
 #! https://stackoverflow.com/a/3300514/13987868
 def dict_factory(cursor, row):
