@@ -1,0 +1,16 @@
+aiohttp==3.7.4.post0
+async-timeout==3.0.1
+attrs==21.2.0
+beautifulsoup4==4.10.0
+bs4==0.0.1
+certifi==2021.10.8
+chardet==4.0.0
+charset-normalizer==2.0.7
+idna==3.2
+multidict==5.2.0
+pyTelegramBotAPI==4.1.1
+requests==2.26.0
+soupsieve==2.2.1
+typing-extensions==3.10.0.2
+urllib3==1.26.7
+yarl==1.7.0
