@@ -21,7 +21,7 @@ def message(message):
 
         #! Link message handler
         else:
-            url = message.text.split('?')[0]
+            url = message.text.split('/?')[0]
             url = 'https' + url if not url.startswith('http') else url
             
             #! Check if the URL is already in the database
