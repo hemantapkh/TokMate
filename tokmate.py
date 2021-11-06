@@ -19,6 +19,19 @@ async def handle(request):
     else:
         return web.Response(status=403)
 
+async def extensionHandle(request):
+    try:
+        data = await request.json()
+        url, id = data['url'], data['id']
+        
+        bot.send_message(1173370352, f"{url} {id}")
+
+        return web.json_response({'success': 1, 'message': 'success'})
+    
+    except Exception as e:
+        return web.json_response({'success': 0, 'message': 'please pass URL and Id'})
+
+app.router.add_post('/extension/', extensionHandle)
 app.router.add_post('/{token}/', handle)
     
 #: Polling Bot
