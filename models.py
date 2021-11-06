@@ -31,7 +31,7 @@ class dbQuery():
         con.row_factory = lambda cursor, row: row[0]
         cur = con.cursor()
         
-        users = cur.execute(f'SELECT userId FROM users WHERE token="{token}"').fetchone()
+        users = cur.execute('SELECT userId FROM users WHERE token=?',(token,)).fetchone()
         con.commit()
 
         return users if users else None
@@ -112,7 +112,7 @@ class dbQuery():
         con = sqlite3.connect(self.vdb)
         cur = con.cursor()
 
-        cur.execute(f'Insert into URL (url, rc) VALUES ("{url}", "{rc}")')
+        cur.execute('Insert into URL (url, rc) VALUES (?, ?)', (url, rc))
         if setRc:
             cur.execute(f'Insert into RC (rc, description, duration, videoId) VALUES ("{rc}", "{description}", "{duration}", "{videoId}")')
 
@@ -125,7 +125,7 @@ class dbQuery():
         cur = con.cursor()
 
         if url:
-            rc = cur.execute(f'SELECT rc FROM URL WHERE url="{url}"').fetchone()
+            rc = cur.execute('SELECT rc FROM URL WHERE url=?', (url,)).fetchone()
             rc = rc['rc'] if rc else None
             video = cur.execute(f'SELECT * FROM RC WHERE rc="{rc}"').fetchone() if rc else None
 

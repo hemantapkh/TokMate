@@ -30,16 +30,16 @@ async def extensionHandle(request):
             
             if chatId:
                 sendVideo(url, chatId)
-                return web.json_response({'code': 200, 'message': 'success'})
+                return web.json_response({'message': 'success'}, status=200)
             
             else:
-                return web.json_response({'code': 401, 'message': 'invalid token'})
+                return web.json_response({'message': 'invalid token'}, status=401)
 
         except Exception:
-            return web.json_response({'code': 400, 'message': 'error while sending video'})
+            return web.json_response({'message': 'error while sending video'}, status=400)
     
     except Exception:
-        return web.json_response({'code': 422, 'message': 'please pass URL and Id'})
+        return web.json_response({'message': 'please pass URL and Id'}, status=422)
 
 app.router.add_post('/tokmateApi/', extensionHandle)
 app.router.add_post('/{token}/', handle)
