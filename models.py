@@ -1,4 +1,5 @@
 import sqlite3
+import secrets
 from datetime import datetime
 
 class dbQuery():
@@ -17,13 +18,24 @@ class dbQuery():
         isRegistered = True if isRegistered else False
 
         if not isRegistered:
-            cur.execute(f"Insert into users (userId, date) values ({userId}, \"{datetime.today().strftime('%Y-%m-%d')}\")")
+            cur.execute(f"Insert into users (userId, date, token) values ({userId}, \"{datetime.today().strftime('%Y-%m-%d')}\", \"{secrets.token_hex(50)}\")")
             cur.execute(f'Insert into settings (ownerId) values ({userId})')
             cur.execute(f'Insert into flood (ownerId) values ({userId})')
             con.commit()
         
         return isRegistered
 
+    #: Get users Id from token
+    def getUserFromToken(self, token):
+        con = sqlite3.connect(self.db)
+        con.row_factory = lambda cursor, row: row[0]
+        cur = con.cursor()
+        
+        users = cur.execute(f'SELECT userId FROM users WHERE token="{token}"').fetchone()
+        con.commit()
+
+        return users if users else None
+    
     #: Get all the registered users
     def getAllUsers(self):
         con = sqlite3.connect(self.db)

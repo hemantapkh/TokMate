@@ -23,19 +23,25 @@ async def handle(request):
 async def extensionHandle(request):
     try:
         data = await request.json()
-        url, id = data['url'], data['id']
+        url, token = data['url'], data['token']
         
         try:
-            sendVideo(url, id)
-            return web.json_response({'code': 200, 'message': 'success'})
+            chatId = dbSql.getUserFromToken(token)
+            
+            if chatId:
+                sendVideo(url, chatId)
+                return web.json_response({'code': 200, 'message': 'success'})
+            
+            else:
+                return web.json_response({'code': 401, 'message': 'invalid token'})
 
         except Exception:
-            return web.json_response({'code': 400, 'message': 'Error while sending video'})
+            return web.json_response({'code': 400, 'message': 'error while sending video'})
     
-    except Exception as e:
+    except Exception:
         return web.json_response({'code': 422, 'message': 'please pass URL and Id'})
 
-app.router.add_post('/extension/', extensionHandle)
+app.router.add_post('/tokmateApi/', extensionHandle)
 app.router.add_post('/{token}/', handle)
     
 #: Polling Bot
