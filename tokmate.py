@@ -2,6 +2,7 @@ import ssl
 from aiohttp import web
 
 from src import *
+from src.message import sendVideo
 
 #: Configuration for webhook
 webhookBaseUrl = f"https://{config['webhookOptions']['webhookHost']}:{config['webhookOptions']['webhookPort']}"
@@ -24,12 +25,15 @@ async def extensionHandle(request):
         data = await request.json()
         url, id = data['url'], data['id']
         
-        bot.send_message(1173370352, f"{url} {id}")
+        try:
+            sendVideo(url, id)
+            return web.json_response({'code': 200, 'message': 'success'})
 
-        return web.json_response({'success': 1, 'message': 'success'})
+        except Exception:
+            return web.json_response({'code': 400, 'message': 'Error while sending video'})
     
     except Exception as e:
-        return web.json_response({'success': 0, 'message': 'please pass URL and Id'})
+        return web.json_response({'code': 422, 'message': 'please pass URL and Id'})
 
 app.router.add_post('/extension/', extensionHandle)
 app.router.add_post('/{token}/', handle)
