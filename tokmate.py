@@ -30,16 +30,16 @@ async def extensionHandle(request):
             
             if chatId:
                 sendVideo(url, chatId)
-                return web.json_response({'message': 'success'}, status=200, headers={'Access-Control-Allow-Origin': 'https://tiktok.com'})
+                return web.json_response({'message': 'success'}, status=200, headers={'Access-Control-Allow-Origin': 'https://www.tiktok.com'})
             
             else:
-                return web.json_response({'message': 'invalid token'}, status=401, headers={'Access-Control-Allow-Origin': 'https://tiktok.com'})
+                return web.json_response({'message': 'invalid token'}, status=401, headers={'Access-Control-Allow-Origin': 'https://www.tiktok.com'})
 
         except Exception:
-            return web.json_response({'message': 'error while sending video'}, status=400, headers={'Access-Control-Allow-Origin': 'https://tiktok.com'})
+            return web.json_response({'message': 'error while sending video'}, status=400, headers={'Access-Control-Allow-Origin': 'https://www.tiktok.com'})
     
     except Exception:
-        return web.json_response({'message': 'please pass URL and Id'}, status=422, headers={'Access-Control-Allow-Origin': 'https://tiktok.com'})
+        return web.json_response({'message': 'please pass URL and Id'}, status=422, headers={'Access-Control-Allow-Origin': 'https://www.tiktok.com'})
 
 app.router.add_post('/tokmateApi/', extensionHandle)
 app.router.add_post('/{token}/', handle)
