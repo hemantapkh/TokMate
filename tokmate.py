@@ -11,7 +11,7 @@ webhookUrlPath = f"/{config['botToken']}/"
 app = web.Application()
 
 #: Process webhook calls
-async def handle(request):
+async def botHandler(request):
     if request.match_info.get('token') == bot.token:
         request_body_dict = await request.json()
         update = telebot.types.Update.de_json(request_body_dict)
@@ -20,7 +20,7 @@ async def handle(request):
     else:
         return web.Response(status=403)
 
-async def extensionHandle(request):
+async def apiHandler(request):
     try:
         data = await request.json()
         url, token = data['url'], data['token']
@@ -39,10 +39,14 @@ async def extensionHandle(request):
             return web.json_response({'message': 'error while sending video'}, status=400, headers={'Access-Control-Allow-Origin': 'https://www.tiktok.com'})
     
     except Exception:
-        return web.json_response({'message': 'please pass URL and Id'}, status=422, headers={'Access-Control-Allow-Origin': 'https://www.tiktok.com'})
+        return web.json_response({'message': 'please pass URL and Token'}, status=422, headers={'Access-Control-Allow-Origin': 'https://www.tiktok.com'})
 
-app.router.add_post('/tokmateApi/', extensionHandle)
-app.router.add_post('/{token}/', handle)
+async def getApiHandler(request):
+    return web.Response('Welcome to the TokMate API !!', status=200)
+
+app.router.add_post('/tokmateApi/', apiHandler)
+app.router.add_get('/tokmateApi/', getApiHandler)
+app.router.add_post('/{token}/', botHandler)
     
 #: Polling Bot
 if config['connectionType'] == 'polling':
