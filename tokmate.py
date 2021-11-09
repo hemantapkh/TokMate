@@ -42,7 +42,7 @@ async def apiHandler(request):
         return web.json_response({'message': 'please pass URL and Token'}, status=422, headers={'Access-Control-Allow-Origin': 'https://www.tiktok.com'})
 
 async def getApiHandler(request):
-    return web.Response('Welcome to the TokMate API !!', status=200)
+    return web.Response(text='Welcome to the TokMate API !!')
 
 app.router.add_post('/tokmateApi/', apiHandler)
 app.router.add_get('/tokmateApi/', getApiHandler)
