@@ -19,8 +19,8 @@ class dbQuery():
 
         if not isRegistered:
             cur.execute(f"Insert into users (userId, date, token) values ({userId}, \"{datetime.today().strftime('%Y-%m-%d')}\", \"{secrets.token_hex(50)}\")")
-            cur.execute(f'Insert into settings (ownerId) values ({userId})')
-            cur.execute(f'Insert into flood (ownerId) values ({userId})')
+            cur.execute(f'Insert into settings (userId) values ({userId})')
+            cur.execute(f'Insert into flood (userId) values ({userId})')
             con.commit()
         
         return isRegistered
@@ -63,7 +63,7 @@ class dbQuery():
         con.row_factory = lambda cursor, row: row[0]
         cur = con.cursor()
         
-        users = cur.execute(f'SELECT ownerId FROM settings WHERE language="{language}"').fetchall()
+        users = cur.execute(f'SELECT userId FROM settings WHERE language="{language}"').fetchall()
         con.commit()
 
         return users if users else None
@@ -89,7 +89,7 @@ class dbQuery():
         con = sqlite3.connect(self.db)
         cur = con.cursor()
         
-        setting = cur.execute(f'SELECT {var} FROM {table} WHERE ownerId={userId} limit 1').fetchone()
+        setting = cur.execute(f'SELECT {var} FROM {table} WHERE userId={userId} limit 1').fetchone()
         con.commit()
 
         return setting[0] if setting else None
@@ -102,8 +102,8 @@ class dbQuery():
 
         #!? If value is None, put value as NULL else "{string}"
         value = f'"{value}"' if value else 'NULL'
-        cur.execute(f'INSERT OR IGNORE INTO {table} (ownerId, {var}) VALUES ({userId}, {value})')
-        cur.execute(f'UPDATE {table} SET {var}={value} WHERE ownerId={userId}')
+        cur.execute(f'INSERT OR IGNORE INTO {table} (userId, {var}) VALUES ({userId}, {value})')
+        cur.execute(f'UPDATE {table} SET {var}={value} WHERE userId={userId}')
         con.commit()
 
     

@@ -49,14 +49,14 @@ if input1 == 'y':
     print('[+] Table users created successfully.')
 
     conn.execute('''CREATE TABLE settings
-            (ownerId       INTEGER PRIMARY KEY,
+            (userId       INTEGER PRIMARY KEY,
             language       TEXT DEFAULT "english"
             );''')
 
     print('[+] Table settings created successfully.')
 
     conn.execute('''CREATE TABLE flood
-         (ownerId       INTEGER PRIMARY KEY,
+         (userId       INTEGER PRIMARY KEY,
          warned         INTEGER DEFAULT 0,
          lastMessage   INTEGER DEFAULT 0,
          blockTill     INTEGER DEFAULT 0
