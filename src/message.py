@@ -67,6 +67,12 @@ def message(message):
         if message.text == '/start':
             bot.send_message(message.chat.id, language['greet'][userLanguage].format(message.from_user.first_name), reply_markup=startKeyboard(userLanguage))
 
+        #! Get user token
+        elif message.text == '/token' or message.text == '/start getToken':
+            token = dbSql.getSetting(message.chat.id, 'token', 'users')
+            
+            bot.send_message(message.chat.id, language['token'][userLanguage].format(token))
+
         #! Inline query start handler
         elif message.text == '/start inlineQuery':
             bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAANEYWV8vnrx1aDQVFFjqajvaCqpwc4AAksNAAIUOzlLPz1-YEAZN1QhBA')
