@@ -27,6 +27,10 @@
         "english": "⚠️ <b>Error[2]</b> Please report this to the us."
     },
 
+    "token": {
+        "english": "🔑<b> Your Token</b>\n\n<code>{}</code>"
+    },
+
     "warningTooFast":{
         "english": "🛑 You are sending messages too fast. Please slowdown or you may get banned."
    
