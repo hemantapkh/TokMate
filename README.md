@@ -35,7 +35,7 @@ For any TikTok videos the bot uploads, the `TikTok URL` of that video and the `v
 
 ## ⚒️ Deployment
 
-The bot relies on a third part website to get the video links which is not opensourced. So, you cannot deploy the bot on your own.
+This bot can be deployed similarly as the [Torrent Hunt bot](https://github.com/hemantapkh/torrenthunt).
 
 ---
 

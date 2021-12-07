@@ -68,7 +68,7 @@ def message(message):
             sendVideo(url=message.text, chatId=message.chat.id, messageId=message.id, userLanguage='english')
 
         elif message.text.startswith('/start'):
-            bot.send_message(message.chat.id, language['greet']['english'].format(message.from_user.first_name), reply_markup=startKeyboard('english'))
+            bot.send_message(message.chat.id, language['greet']['english'].format(message.chat.title), reply_markup=startKeyboard('english'))
             dbSql.setUser(message.chat.id)
     
     # Personal message
