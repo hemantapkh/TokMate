@@ -3,7 +3,7 @@ from os import path
 
 import telebot
 from models import dbQuery
-from tikTokScraper import getVideo
+from tikTokScraper import getVideo, tikTokDomains
 
 #! Finding the absolute path of the config file
 scriptPath = path.abspath(__file__)

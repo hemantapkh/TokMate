@@ -48,6 +48,13 @@ if input1 == 'y':
 
     print('[+] Table users created successfully.')
 
+    conn.execute('''CREATE TABLE groups
+            (UserId       INTEGER PRIMARY KEY,
+            date          STRING  NOT NULL
+            );''')
+
+    print('[+] Table groups created successfully.')
+
     conn.execute('''CREATE TABLE settings
             (userId       INTEGER PRIMARY KEY,
             language       TEXT DEFAULT "english"

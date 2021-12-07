@@ -9,20 +9,27 @@ class dbQuery():
     
     #: Add the user into the database if not registered
     def setUser(self, userId):
+        chatType = 'users' if userId > 0 else 'groups'
         con = sqlite3.connect(self.db)
         cur = con.cursor()
 
-        isRegistered = cur.execute(f'SELECT * FROM users WHERE userId={userId}').fetchone()
+        isRegistered = cur.execute(f'SELECT * FROM {chatType} WHERE userId={userId}').fetchone()
         con.commit()
 
         isRegistered = True if isRegistered else False
 
         if not isRegistered:
-            cur.execute(f"Insert into users (userId, date, token) values ({userId}, \"{datetime.today().strftime('%Y-%m-%d')}\", \"{secrets.token_hex(50)}\")")
-            cur.execute(f'Insert into settings (userId) values ({userId})')
-            cur.execute(f'Insert into flood (userId) values ({userId})')
-            con.commit()
-        
+            if chatType == 'users':
+                cur.execute(f"Insert into users (userId, date, token) values ({userId}, \"{datetime.today().strftime('%Y-%m-%d')}\", \"{secrets.token_hex(50)}\")")
+                cur.execute(f'Insert into settings (userId) values ({userId})')
+                cur.execute(f'Insert into flood (userId) values ({userId})')
+                con.commit()
+            
+            else:
+                cur.execute(f"Insert into groups (userId, date) values ({userId}, \"{datetime.today().strftime('%Y-%m-%d')}\")")
+                cur.execute(f'Insert into settings (userId) values ({userId})')
+                con.commit()
+
         return isRegistered
 
     #: Get users Id from token
