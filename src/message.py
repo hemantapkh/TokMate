@@ -74,7 +74,7 @@ def message(message):
     # Personal message
     elif floodControl(message, 'english'):
         #! Start message handler
-        if message.text.startswith('/start'):
+        if message.text == '/start':
             bot.send_message(message.chat.id, language['greet']['english'].format(message.from_user.first_name), reply_markup=startKeyboard('english'))
             dbSql.setUser(message.chat.id)
 
