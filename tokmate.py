@@ -54,7 +54,7 @@ def isSubscribed(userId):
             return True
 
     except Exception:
-        return True
+        return False
 
 async def isSubscribedHandler(request):
     userId = request.rel_url.query['userid'] if 'userid' in request.rel_url.query else None
