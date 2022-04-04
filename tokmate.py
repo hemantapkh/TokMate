@@ -44,8 +44,31 @@ async def apiHandler(request):
 async def getApiHandler(request):
     return web.Response(text='Welcome to the TokMate API !!')
 
+def isSubscribed(userId):
+    try:
+        status = bot.get_chat_member('-1001270853324', userId)
+        if status.status == 'left':
+            return False
+        
+        else:
+            return True
+
+    except Exception:
+        return True
+
+async def isSubscribedHandler(request):
+    userId = request.rel_url.query['userid'] if 'userid' in request.rel_url.query else None
+
+    if userId:
+        return web.json_response({'subscribed': isSubscribed(userId)}, status=200)
+    
+    else:
+        return web.json_response({'message': 'please pass userid'}, status=422)
+
+
 app.router.add_post('/tokmateApi/', apiHandler)
 app.router.add_get('/tokmateApi/', getApiHandler)
+app.router.add_get('/isSubscribed', isSubscribedHandler)
 app.router.add_post('/{token}/', botHandler)
     
 #: Polling Bot
