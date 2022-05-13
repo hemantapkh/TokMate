@@ -1,6 +1,14 @@
 import requests
+import base64
+from urllib.parse import parse_qs
+from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
+
+def b64decode(str):
+    str = str.replace('_','/')
+    str += "=" * ((4 - len(str) % 4) % 4)
+    return base64.b64decode(str)
 
 headers = {
     'user-agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:92.0) Gecko/20100101 Firefox/92.0',
@@ -77,12 +85,14 @@ def getVideo(url):
                         response = requests.post('https://musicaldown.com//mp3/download', data=data, headers=headers)
                         soup = BeautifulSoup(response.content, 'html.parser')
 
+                        link = soup.findAll('a',attrs={'class':'btn waves-effect waves-light orange'})[3]['href']
+
                         return {
                             'success': True,
                             'type': 'audio',
                             'description': soup.findAll('h2', attrs={'class':'white-text'})[0].get_text()[13:],
                             'thumbnail': None,
-                            'link': soup.findAll('a',attrs={'class':'btn waves-effect waves-light orange'})[3]['href'],
+                            'link': b64decode(parse_qs(urlparse(link).query)['url'][0]).decode(),
                             'url': url
                         }
 
@@ -95,16 +105,18 @@ def getVideo(url):
                 else:
                     soup = BeautifulSoup(response.content, 'html.parser')
 
+                    link = soup.findAll('a',attrs={'class':'btn waves-effect waves-light orange'})[3]['href']
+
                     return {
                         'success': True,
                         'type': 'video',
                         'description': soup.findAll('h2', attrs={'class':'white-text'})[0].get_text()[23:-19],
                         'thumbnail': soup.findAll('img',attrs={'class':'responsive-img'})[0]['src'],
-                        'link': soup.findAll('a',attrs={'class':'btn waves-effect waves-light orange'})[3]['href'],
+                        'link': b64decode(parse_qs(urlparse(link).query)['url'][0]).decode(),
                         'url': url
                     }
 
-            except Exception:
+            except Exception as e:
                 return {
                     'success': False,
                     'error': 'exception'
