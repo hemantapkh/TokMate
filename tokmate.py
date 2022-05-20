@@ -10,6 +10,7 @@ webhookUrlPath = f"/{config['botToken']}/"
 
 app = web.Application()
 
+
 #: Process webhook calls
 async def botHandler(request):
     if request.match_info.get('token') == bot.token:
@@ -20,48 +21,52 @@ async def botHandler(request):
     else:
         return web.Response(status=403)
 
+
 async def apiHandler(request):
     try:
         data = await request.json()
         url, token = data['url'], data['token']
-        
+
         try:
             chatId = dbSql.getUserFromToken(token)
-            
+
             if chatId:
                 sendVideo(url, chatId)
                 return web.json_response({'message': 'success'}, status=200, headers={'Access-Control-Allow-Origin': 'https://www.tiktok.com'})
-            
+
             else:
                 return web.json_response({'message': 'invalid token'}, status=401, headers={'Access-Control-Allow-Origin': 'https://www.tiktok.com'})
 
         except Exception:
             return web.json_response({'message': 'error while sending video'}, status=400, headers={'Access-Control-Allow-Origin': 'https://www.tiktok.com'})
-    
+
     except Exception:
         return web.json_response({'message': 'please pass URL and Token'}, status=422, headers={'Access-Control-Allow-Origin': 'https://www.tiktok.com'})
 
+
 async def getApiHandler(request):
     return web.Response(text='Welcome to the TokMate API !!')
+
 
 def isSubscribed(userId):
     try:
         status = bot.get_chat_member('-1001270853324', userId)
         if status.status == 'left':
             return False
-        
+
         else:
             return True
 
     except Exception:
         return False
 
+
 async def isSubscribedHandler(request):
     userId = request.rel_url.query['userid'] if 'userid' in request.rel_url.query else None
 
     if userId:
         return web.json_response({'subscribed': isSubscribed(userId)}, status=200)
-    
+
     else:
         return web.json_response({'message': 'please pass userid'}, status=422)
 
@@ -70,12 +75,14 @@ app.router.add_post('/tokmateApi/', apiHandler)
 app.router.add_get('/tokmateApi/', getApiHandler)
 app.router.add_get('/isSubscribed', isSubscribedHandler)
 app.router.add_post('/{token}/', botHandler)
-    
+
+
 #: Polling Bot
 if config['connectionType'] == 'polling':
     #! Remove previous webhook if exists
     bot.remove_webhook()
     bot.polling(none_stop=True)
+
 
 #: Webhook Bot
 elif config['connectionType'] == 'webhook':

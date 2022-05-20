@@ -4,6 +4,7 @@ from src.keyboard import *
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
 
+
 #: Inline query
 @bot.inline_handler(lambda query: len(query.query) >= 0)
 def inline(inline_query):
@@ -13,14 +14,14 @@ def inline(inline_query):
 
     if len(query) == 0:
             bot.answer_inline_query(inline_query.id, results=[], is_personal=True, switch_pm_text=language['enterLink'][userLanguage], switch_pm_parameter='inlineQuery')
-    
+
     else:
         url = query.split('/?')[0]
         url = 'https' + url if not url.startswith('http') else url
-        
+
         #! Check if the URL is already in the database
         videoId = dbSql.getVideo(url=url)
-        
+
         fromDb = True
         if not videoId:
             video = getVideo(url)

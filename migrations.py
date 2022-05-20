@@ -1,5 +1,6 @@
+import os
+import json
 import sqlite3
-import os, json
 
 config = json.load(open('src/config.json'))
 videoDatabase = config['videoDatabase']
@@ -23,7 +24,8 @@ if input1 == 'y':
             (rc       TEXT PRIMARY KEY,
             description  TEXT,
             duration     TEXT,
-            videoId      TEXT
+            videoId      TEXT,
+            id           TEXT
             );''')
 
     print('[+] Table url created successfully.')
@@ -68,14 +70,15 @@ if input1 == 'y':
          lastMessage   INTEGER DEFAULT 0,
          blockTill     INTEGER DEFAULT 0
          );''')
-         
+
     print('[+] Table flood created successfully.')
 
     conn.execute('''CREATE TABLE stats
         (messageRequest INT DEFAULT 0,
         messageRequestCached INT DEFAULT 0,
         inlineRequest  INT DEFAULT 0,
-        inlineRequestCached  INT DEFAULT 0
+        inlineRequestCached  INT DEFAULT 0,
+        deepLinkRequest INT DEFAULT 0,
         );''')
 
     conn.execute('INSERT INTO stats VALUES(0,0,0,0)')

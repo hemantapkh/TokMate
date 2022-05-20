@@ -5,18 +5,19 @@ from src.floodControl import floodControl
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
 
+
 def sendVideo(url, chatId, messageId=None, userLanguage=None):
-    userLanguage  = userLanguage or dbSql.getSetting(chatId, 'language')
+    userLanguage = userLanguage or dbSql.getSetting(chatId, 'language')
     chatType = 'users' if chatId > 0 else 'groups'
-    
+
     url = url.split('/?')[0]
     url = 'https' + url if not url.startswith('http') else url
-    
+
     #! Check if the URL is already in the database
     videoId = dbSql.getVideo(url=url)
     setUrlVideoId = False
     setRcVideoId = False
-    
+
     if not videoId:
         setUrlVideoId = True
         video = getVideo(url)
@@ -40,7 +41,7 @@ def sendVideo(url, chatId, messageId=None, userLanguage=None):
         if setRcVideoId:
             sent = bot.send_video(chatId, videoId, reply_markup=resultKeyboard(userLanguage, url), reply_to_message_id=messageId if chatType == 'groups' else None)
             dbSql.increaseCounter('messageRequest')
-        
+
         else:
             sent = bot.send_video(chatId, videoId['videoId'], reply_markup=resultKeyboard(userLanguage, url), reply_to_message_id=messageId if chatType == 'groups' else None)
             dbSql.increaseCounter('messageRequestCached')
@@ -54,10 +55,11 @@ def sendVideo(url, chatId, messageId=None, userLanguage=None):
 
         elif setUrlVideoId:
             dbSql.setVideo(url=url, rc=rc, setRc=False)
-    
+
     #! Error
     else:
         bot.send_message(chatId, language[video['error']][userLanguage], reply_markup=socialKeyboard(userLanguage) if video['error'] in ['exception', 'unknownError'] else None, reply_to_message_id=messageId if chatType == 'groups' else None)
+
 
 #: Text handler
 @bot.message_handler(content_types=['text'])
@@ -70,7 +72,7 @@ def message(message):
         elif message.text.startswith('/start'):
             bot.send_message(message.chat.id, language['greet']['english'].format(message.chat.title), reply_markup=startKeyboard('english'))
             dbSql.setUser(message.chat.id)
-    
+
     # Personal message
     elif floodControl(message, 'english'):
         #! Start message handler
@@ -81,12 +83,24 @@ def message(message):
         #! Get user token
         elif message.text == '/token' or message.text == '/start getToken':
             token = dbSql.getSetting(message.chat.id, 'token', 'users')
-            
+
             bot.send_message(message.chat.id, language['token']['english'].format(token))
 
         #! Inline query start handler
         elif message.text == '/start inlineQuery':
             bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAANEYWV8vnrx1aDQVFFjqajvaCqpwc4AAksNAAIUOzlLPz1-YEAZN1QhBA')
+
+        #! Get video from deep link
+        elif message.text.startswith('/start getVideo'):
+            id = message.text.split('_')[1]
+            video = dbSql.getVideo(id=id)
+
+            if video:
+                bot.send_video(message.chat.id, video['videoId'])
+                dbSql.increaseCounter('deepLinkRequest')
+
+            else:
+                bot.send_sticker(message.chat.id, 'CAACAgEAAxkBAAEExe9ih4tmJpAZSpQ7glF1ovfpXT8LqAACYgEAAgkeUEUw-f8AAZo7VDckBA', reply_to_message_id=message.id)
 
         #! Link message handler
         else:
