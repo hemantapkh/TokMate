@@ -102,6 +102,13 @@ def message(message):
             else:
                 bot.send_sticker(message.chat.id, 'CAACAgEAAxkBAAEExe9ih4tmJpAZSpQ7glF1ovfpXT8LqAACYgEAAgkeUEUw-f8AAZo7VDckBA', reply_to_message_id=message.id)
 
+        #! Download video from deeplink
+        elif message.text.startswith('/start downloadVideo'):
+            id = message.text.split('_')[1]
+            link = f'https://tiktok.com/@tokmatebot/video/{id}'
+
+            sendVideo(url=link, chatId=message.chat.id, messageId=message.id, userLanguage='english')
+
         #! Link message handler
         else:
             sendVideo(url=message.text, chatId=message.chat.id, messageId=message.id, userLanguage='english')
