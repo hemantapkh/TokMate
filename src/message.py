@@ -42,12 +42,12 @@ def sendVideo(url, chatId, messageId=None, userLanguage=None):
         bot.send_chat_action(chatId, 'upload_video')
 
         if setRcVideoId:
-            link = 'https://t.me/tokmatebot?start=getLink_' + id
+            link = f'https://t.me/tokmatebot?start=getLink_{id}'
             sent = bot.send_video(chatId, videoId, reply_markup=resultKeyboard(userLanguage, link), reply_to_message_id=messageId if chatType == 'groups' else None)
             dbSql.increaseCounter('messageRequest')
 
         else:
-            link = 'https://t.me/tokmatebot?start=getLink_' + videoId['id']
+            link = f"https://t.me/tokmatebot?start=getLink_{videoId['id']}"
             sent = bot.send_video(chatId, videoId['videoId'], reply_markup=resultKeyboard(userLanguage, link), reply_to_message_id=messageId if chatType == 'groups' else None)
             dbSql.increaseCounter('messageRequestCached')
 
