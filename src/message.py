@@ -1,3 +1,5 @@
+import secrets
+
 from src.objs import *
 from src.keyboard import *
 from src.floodControl import floodControl
@@ -33,16 +35,19 @@ def sendVideo(url, chatId, messageId=None, userLanguage=None):
             if not videoId:
                 videoId = videoLink
                 setRcVideoId = True
+                id = secrets.token_hex(20)
 
     #! If video download is successful
     if videoId:
         bot.send_chat_action(chatId, 'upload_video')
 
         if setRcVideoId:
+            url = 'https://t.me/tokmatebot?start=getLink_' + id
             sent = bot.send_video(chatId, videoId, reply_markup=resultKeyboard(userLanguage, url), reply_to_message_id=messageId if chatType == 'groups' else None)
             dbSql.increaseCounter('messageRequest')
 
         else:
+            url = 'https://t.me/tokmatebot?start=getLink_' + videoId['id']
             sent = bot.send_video(chatId, videoId['videoId'], reply_markup=resultKeyboard(userLanguage, url), reply_to_message_id=messageId if chatType == 'groups' else None)
             dbSql.increaseCounter('messageRequestCached')
 
@@ -51,7 +56,7 @@ def sendVideo(url, chatId, messageId=None, userLanguage=None):
             bot.delete_message(chatId, messageId)
 
         if setRcVideoId:
-            dbSql.setVideo(rc=rc, url=url, videoId=sent.video.file_id, duration=sent.video.duration, description=video['description'])
+            dbSql.setVideo(rc=rc, url=url, videoId=sent.video.file_id, duration=sent.video.duration, description=video['description'], id=id)
 
         elif setUrlVideoId:
             dbSql.setVideo(url=url, rc=rc, setRc=False)
@@ -96,7 +101,8 @@ def message(message):
             video = dbSql.getVideo(id=id)
 
             if video:
-                bot.send_video(message.chat.id, video['videoId'])
+                url = f"https://t.me/tokmatebot?start=getLink_{video['id']}"
+                bot.send_video(message.chat.id, video['videoId'], reply_markup=resultKeyboard('english', url))
                 dbSql.increaseCounter('deepLinkRequest')
 
             else:
@@ -108,6 +114,21 @@ def message(message):
             link = f'https://tiktok.com/@tokmatebot/video/{id}'
 
             sendVideo(url=link, chatId=message.chat.id, messageId=message.id, userLanguage='english')
+
+        #! Get links from deeplink
+        elif message.text.startswith('/start getLink'):
+            id = message.text.split('_')[1]
+            video = dbSql.getVideo(id=id)
+
+            if video:
+                text = '''
+                <b>👤{}</b>\n\n<b>🔗 TikTok</b>\n<code>{}</code>\n\n<b>🔗 Telegram</b>\n<code>https://t.me/tokmatebot?start=getVideo_{}</code>
+                '''.format(video['description'], video['url'], video['id'])
+
+                bot.send_message(message.chat.id, text, reply_markup=linkKeyboard('english', video))
+
+            else:
+                bot.send_sticker(message.chat.id, 'CAACAgEAAxkBAAEExe9ih4tmJpAZSpQ7glF1ovfpXT8LqAACYgEAAgkeUEUw-f8AAZo7VDckBA', reply_to_message_id=message.id)
 
         #! Link message handler
         else:

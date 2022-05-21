@@ -42,14 +42,15 @@ def inline(inline_query):
         if videoId:
             #! If the video is already in the database
             if fromDb:
-                result = telebot.types.InlineQueryResultCachedVideo(id=0, video_file_id=videoId['videoId'], title=videoId['description'], description=language['clickToSend'][userLanguage], reply_markup=resultKeyboard(userLanguage, url, inline=True))
+                url = 'https://t.me/tokmatebot?start=getLink_'+ videoId['id']
+                result = telebot.types.InlineQueryResultCachedVideo(id=0, video_file_id=videoId['videoId'], title=videoId['description'], description=language['clickToSend'][userLanguage], reply_markup=resultKeyboard(userLanguage, url))
                 dbSql.increaseCounter('inlineRequestCached')
 
             else:
-                result = telebot.types.InlineQueryResultVideo(id=0, title=video['description'], video_url=video['link'], mime_type='video/mp4', thumb_url=video['thumbnail'], description=language['clickToSend'][userLanguage], reply_markup=resultKeyboard(userLanguage, url, inline=True))
+                result = telebot.types.InlineQueryResultVideo(id=0, title=video['description'], video_url=video['link'], mime_type='video/mp4', thumb_url=video['thumbnail'], description=language['clickToSend'][userLanguage], reply_markup=resultKeyboard(userLanguage, url, btn=2))
                 dbSql.increaseCounter('inlineRequest')
 
-            bot.answer_inline_query(inline_query.id, [result], is_personal=True)
+            bot.answer_inline_query(inline_query.id, [result], cache_time=9999999999)
 
         #! Error
         else:

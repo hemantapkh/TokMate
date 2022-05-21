@@ -58,10 +58,23 @@
     },
 
     "linkBtn": {
+        "english": "💫 Link"
+    },
+
+    "link2Btn": {
         "english": "🔗 Link"
     },
 
+
     "audioBtn": {
         "english": "🎵 Audio"
+    },
+
+    "openInTTBtn": {
+        "english": "♪ Open in TikTok"
+    },
+
+    "videoBtn": {
+        "english": "🎬 Video"
     }
 }

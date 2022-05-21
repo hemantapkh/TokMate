@@ -116,17 +116,17 @@ class dbQuery():
 
 
     #: Set video_id in the database
-    def setVideo(self, url, rc, videoId=None, description=None, duration=None, setRc=True):
+    def setVideo(self, url, rc, videoId=None, description=None, duration=None, setRc=True, id=None):
         con = sqlite3.connect(self.vdb)
         cur = con.cursor()
 
         cur.execute('Insert into URL (url, rc) VALUES (?, ?)', (url, rc))
         if setRc:
-            cur.execute(f'Insert into RC (rc, description, duration, videoId, id) VALUES ("{rc}", "{description}", "{duration}", "{videoId}", "{secrets.token_hex(20)}")')
+            cur.execute(f'Insert into RC (rc, description, duration, videoId, id) VALUES ("{rc}", "{description}", "{duration}", "{videoId}", "{id}")')
 
         con.commit()
 
-    #: Get the video_id from the database
+    #: Get the video data
     def getVideo(self, url=None, rc=None, id=None):
         con = sqlite3.connect(self.vdb)
         con.row_factory = dict_factory
@@ -141,7 +141,7 @@ class dbQuery():
             video = cur.execute(f'SELECT * FROM RC WHERE rc=?', (rc,)).fetchone()
 
         else:
-            video = cur.execute(f'SELECT * FROM RC WHERE id=?', (id,)).fetchone()
+            video = cur.execute(f'SELECT * FROM URL INNER JOIN RC ON URL.rc=RC.rc WHERE RC.id=?', (id,)).fetchone()
 
         con.commit()
 
